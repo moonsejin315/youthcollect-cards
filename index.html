@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>캡션 복사</title>
+<style>
+:root{--g:#299569;--gd:#1B6B4B;--bg:#f4f8f6;--c:#fff;--t:#1a2420;--s:#667;}
+@media(prefers-color-scheme:dark){:root{--bg:#111815;--c:#1b2420;--t:#eef;--s:#9ab}}
+body{margin:0;background:var(--bg);color:var(--t);font:16px/1.5 -apple-system,"Apple SD Gothic Neo",sans-serif;word-break:keep-all}
+main{max-width:640px;margin:0 auto;padding:16px}
+h1{font-size:20px;margin:8px 0 16px;color:var(--gd)}
+.card{background:var(--c);border-radius:16px;padding:16px;margin-bottom:14px;box-shadow:0 1px 4px #0001}
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.t{font-weight:700}.d{color:var(--s);font-size:13px}
+button{min-height:48px;padding:0 20px;border:0;border-radius:12px;background:var(--g);color:#fff;font-size:16px;font-weight:700;flex:none}
+button.ok{background:var(--gd)}
+details{margin-top:10px;color:var(--s)}summary{min-height:44px;display:flex;align-items:center}
+pre{white-space:pre-wrap;font:inherit;color:var(--t);margin:0}
+</style></head><body><main>
+<h1>청년모아모아 캡션 복사</h1><div id="list"></div></main>
+<script>
+fetch('captions.json?'+Date.now()).then(r=>r.json()).then(items=>{
+  const list=document.getElementById('list');
+  items.forEach(it=>{
+    const c=document.createElement('div');c.className='card';
+    const top=document.createElement('div');top.className='top';
+    const info=document.createElement('div');
+    const t=document.createElement('div');t.className='t';t.textContent=it.title;
+    const d=document.createElement('div');d.className='d';d.textContent=it.posted;
+    info.append(t,d);
+    const b=document.createElement('button');b.textContent='캡션 복사';
+    b.onclick=async()=>{
+      try{await navigator.clipboard.writeText(it.caption)}catch(e){
+        const a=document.createElement('textarea');a.value=it.caption;document.body.append(a);a.select();document.execCommand('copy');a.remove();}
+      b.textContent='복사됨 ✓';b.className='ok';setTimeout(()=>{b.textContent='캡션 복사';b.className=''},2000);};
+    top.append(info,b);
+    const det=document.createElement('details');
+    const sm=document.createElement('summary');sm.textContent='미리보기';
+    const pre=document.createElement('pre');pre.textContent=it.caption;
+    det.append(sm,pre);c.append(top,det);list.append(c);
+  });
+}).catch(()=>{document.getElementById('list').textContent='목록을 불러오지 못했어요.'});
+</script></body></html>
